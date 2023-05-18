@@ -20,13 +20,12 @@ class HeadHunterAPI(AbstractApi):
         params = {
             'text': text,  # Текст фильтра. В имени должно быть слово "Аналитик"
             # 'area': 1,  # Поиск ощуществляется по вакансиям города Москва
-            'page': page,  # Индекс страницы поиска на HH
-            'per_page': 3  # Кол-во вакансий на 1 странице
+            'page': 0,  # Индекс страницы поиска на HH
+            'per_page': 2  # Кол-во вакансий на 1 странице
         }
 
-        req = requests.get('https://api.hh.ru/vacancies', params)  # Посылаем запрос к API
-        data = req.content.decode()  # Декодируем его ответ, чтобы Кириллица отображалась корректно
-        req.close()
-
-        return data
+        req = requests.get(cls.url + 'vacancies', params).json()  # Посылаем запрос к API
+        # data = req.content.decode()  # Декодируем его ответ, чтобы Кириллица отображалась корректно
+        # req.close()
+        return req
 

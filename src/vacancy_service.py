@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 class VacancyService(ABC):
 
     @abstractmethod
-    def add_vacancy(self):
+    def add_vacancy(self, vacancy):
         pass
 
     @abstractmethod
