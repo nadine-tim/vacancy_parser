@@ -1,22 +1,22 @@
 from src.hh_api import HeadHunterAPI
+from src.sj_api import SuperJobApi
 from src.vacancy import Vacancy
 from src.json_saver import JsonSaver
+from pprint import pprint
+
 
 if __name__ == '__main__':
     hh = HeadHunterAPI()
-    vacancies = hh.get_vacancies('Python Developer')['items']
-    vacancy_list = []
+    sj = SuperJobApi()
+
+    vacancy_list_hh = hh.get_vacancies('Python Developer', 50)
+    vacancy_list_sj = sj.get_vacancies('Python Developer', 50)
+
     json_saver = JsonSaver()
 
-    for vacancy in vacancies:
-        vacancy_list.append({
-            'name': vacancy['name'],
-            'url': vacancy['alternate_url'],
-            'experience': vacancy['experience'],
-            'payment': vacancy['salary']
-        })
-    json_saver.add_vacancy(vacancy_list)
-    print(vacancy_list)
+    json_saver.add_vacancy(vacancy_list_sj)
+    pprint(vacancy_list_sj)
+
 
     def filter_vacancies(hh_vacancies, superjob_vacancies, filter_words):
         pass
