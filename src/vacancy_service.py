@@ -8,9 +8,9 @@ class VacancyService(ABC):
         pass
 
     @abstractmethod
-    def filter_vacancies(self):
+    def filter_vacancies(self, salary):
         pass
 
     @abstractmethod
-    def delete_vacancy(self):
+    def delete_vacancy(self, vacancy):
         pass
