@@ -1,6 +1,5 @@
 from src.hh_api import HeadHunterAPI
 from src.sj_api import SuperJobApi
-from src.vacancy import Vacancy
 from src.json_saver import JsonSaver
 from pprint import pprint
 
@@ -8,22 +7,25 @@ from pprint import pprint
 def user_interaction():
 
     platform_choice = int(input("Укажите платформу для поиска: 1 - HeadHunter, 2 - SuperJob \n"))
-    filter_words = input("Введите ключевые слова для фильтрации вакансий:\n").split()
+    filter_words = input("Введите ключевое слово для фильтрации вакансий:\n")
     pages = int(input("Какое количество страниц вы хотите просмотреть?\n"))
-    filtered_by_salary = int(input("Введите минимальный порог з\п\ в рублях n"))
+    filtered_by_salary = int(input("Введите минимальный порог з/п в рублях \n"))
     user_inputs = {'platform': platform_choice, 'keyword': filter_words, 'pages': pages, 'min_salary': filtered_by_salary}
     return user_inputs
 
 
-# filtered_vacancies = filter_vacancies(hh_vacancies, superjob_vacancies, filter_words)
-#
-# if not filtered_vacancies:
-#     print("Нет вакансий, соответствующих заданным критериям.")
-#     return
-#
-# sorted_vacancies = sort_vacancies(filtered_vacancies)
-# top_vacancies = get_top_vacancies(sorted_vacancies, top_n)
-# print_vacancies(top_vacancies)
+def user_delete_vacancy(json_saver):
+
+    while True:
+        delete_question = input("Хотите ли вы удалить вакансию? да/нет(завершить работу программы)\n")
+        if delete_question == "да".lower():
+            vid = str(input("Напишите id вакансии, которую вы хотите удалить:\n"))
+            json_saver.delete_vacancy(vid)
+        elif delete_question == "нет".lower():
+            break
+        else:
+            print("Неверный ввод. Ожидается ДА или НЕТ")
+
 
 def main():
     vacancies = []
@@ -40,17 +42,7 @@ def main():
 
     pprint(json_saver.filter_vacancies(user_inputs['min_salary']))
 
-
-# def filter_vacancies(hh_vacancies, superjob_vacancies, filter_words):
-#     pass
-#
-#
-# def sort_vacancies(filtered_vacancies):
-#     pass
-#
-#
-# def get_top_vacancies(sorted_vacancies, top_n):
-#     pass
+    user_delete_vacancy(json_saver)
 
 
 if __name__ == '__main__':

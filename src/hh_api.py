@@ -1,7 +1,4 @@
-import math
-
 import requests
-
 from src.abstract_api import AbstractApi
 
 
@@ -25,15 +22,24 @@ class HeadHunterAPI(AbstractApi):
                 'per_page': 100  # Кол-во вакансий на 1 странице
             }
 
-            hh_request = requests.get(self.url, params=params).json()  # Посылаем запрос к API
-            hh_vacancies = hh_request['items']
+            hh_request = {}
+            try:
+                hh_request = requests.get(self.url, params=params)  # Посылаем запрос к API
+            except requests.HTTPError:
+                print("bad response from hh.ru")
+
+            if hh_request is None or hh_request.status_code != 200:
+                return []
+            else:
+                hh_vacancies = hh_request.json()['items']
 
             for vacancy in hh_vacancies:
                 salary_from, salary_to, currency = self.get_salary(vacancy['salary'])
                 vacancy_list.append({
+                    'id': vacancy['id'],
                     'name': vacancy['name'],
                     'url': vacancy['alternate_url'],
-                    'experience': vacancy['experience'],
+                    'experience': vacancy['experience']['name'],
                     'salary_from': salary_from,
                     'salary_to': salary_to,
                     'currency': currency,
@@ -42,10 +48,14 @@ class HeadHunterAPI(AbstractApi):
                 })
             pages_number += 1
             print(f'Поиск на hh.ru , номер страницы: {pages_number}')
+        print(f'найдено вакансий: {len(vacancy_list)}')
         return vacancy_list
 
     @staticmethod
     def get_salary(salary):
+        """
+        Проверка наличия указания з/п вилки
+        """
         salary_gross = [None, None, None]
         if salary and salary['from'] and salary['from'] != 0:
             salary_gross[0] = salary['from']

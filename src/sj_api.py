@@ -1,6 +1,5 @@
 import requests
 import os
-import math
 from src.abstract_api import AbstractApi
 
 
@@ -26,11 +25,20 @@ class SuperJobApi(AbstractApi):
                 'count': 100  # Кол-во вакансий на 1 странице
             }
 
-            sj_request = requests.get(self.url, params=params, headers=self.header)  # Посылаем запрос к API
-            sj_vacancies = sj_request.json()['objects']
+            sj_request = {}
+            try:
+                sj_request = requests.get(self.url, params=params, headers=self.header)  # Посылаем запрос к API
+            except requests.HTTPError:
+                print("bad response from superjob.ru")
+
+            if sj_request is None:
+                return []
+            else:
+                sj_vacancies = sj_request.json()['objects']
 
             for vacancy in sj_vacancies:
                 vacancy_list.append({
+                    'id': vacancy['id'],
                     'name': vacancy['profession'],
                     'url': vacancy['link'],
                     'experience': vacancy['experience']['title'],
@@ -42,10 +50,14 @@ class SuperJobApi(AbstractApi):
                 })
             pages_number += 1
             print(f'Поиск на superjob.ru , номер страницы: {pages_number}')
+        print(f'найдено вакансий: {len(vacancy_list)}')
         return vacancy_list
 
     @staticmethod
     def get_salary(salary):
+        """
+        Проверка наличия указания з/п вилки
+        """
         salary_gross = [None, None]
         if salary and salary['from'] and salary['from'] != 0:
             salary_gross[0] = salary['from']
